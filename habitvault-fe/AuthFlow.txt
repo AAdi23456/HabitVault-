@@ -1,0 +1,70 @@
+
+🔒 Implement a complete authentication + authorization flow based on the following strict requirements:
+
+---
+
+🔍 **Initial Visit Behavior**
+- On visiting the site, check for an auth cookie (e.g. token or session).
+  - ✅ If the cookie is present: redirect immediately to `/dashboard`
+  - ❌ If the cookie is missing: redirect to the `/landing` page
+
+---
+
+🎯 **Landing Page (`/landing`)**
+- Show **Login** and **Register** buttons using shadcn/ui
+- If the user is already logged in, hide the Login and Register buttons and only show the Logout button
+
+---
+
+📝 **Register Page (`/register`)**
+- Use a shadcn/ui form with these fields: `username`, `email`, `password`
+- Add a **“Suggest Password”** button next to the password field that:
+  - On click, generates and fills an 8-character strong random password
+- Add a **show/hide (eye) icon** next to the password input to toggle password visibility
+- Use `react-hook-form` + `zod` for form handling and validation
+- On submit:
+  - Send a `POST` request to `/api/auth/register`
+  - On success: redirect to the `/login` page
+  - On error: show an inline error message
+
+---
+
+🔐 **Login Page (`/login`)**
+- Use a shadcn/ui form with `email/username` and `password`
+- On submit:
+  - Send a `POST` request to `/api/auth/login`
+  - On success:
+    - Store the auth cookie/session
+    - Redirect to `/dashboard`
+  - On error: show an inline error message
+
+---
+
+📄 **Dashboard Page (`/dashboard`)**
+- Should only be accessible if the user is logged in (cookie/session is present)
+- If not logged in, redirect to `/landing`
+- Show a **Logout** button
+  - On click:
+    - Clear the cookie/session
+    - Redirect to `/landing`
+
+---
+
+🔁 **Auth Guards / Redirect Logic**
+- Use middleware or layout logic to:
+  - Prevent access to `/dashboard` unless the user is authenticated
+  - Prevent showing Login/Register buttons when user is already logged in
+
+---
+
+📁 **Structure**
+- Pages: use App Router structure → `app/landing/page.tsx`, `app/register/page.tsx`, `app/login/page.tsx`, `app/dashboard/page.tsx`
+- Use `components/auth/` for reusable form elements and logic
+- Use `lib/utils.ts` for utility functions like `generateRandomPassword`
+
+---
+
+🧪 **Final Step**
+- Analyze the current frontend codebase
+- Identify and fix any missing logic, broken redirects, or UI/UX elements that contradict the flow above
+- Ensure all pages and flows match the strict requirements outlined here

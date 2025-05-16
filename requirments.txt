@@ -1,0 +1,74 @@
+Consistency beats intensity — that’s the philosophy behind HabitVault. Most habit apps are bloated or distracting. This one is minimalist, focused, and built for tracking progress with visual clarity and emotional rewards.
+
+Users log habits daily, maintain streaks, and gain insight into their personal productivity over time through visual dashboards.
+
+You're tasked with building a clean, secure MVP for this daily habit tracker.
+
+🎯 Objective:
+Build a fullstack application where authenticated users can:
+
+Add, manage, and track personal habits
+Check off completed habits each day
+Maintain streaks and view completion heatmaps
+Visualize performance over time
+Persist user settings locally for a personalized experience
+👥 User Role: user
+There is a single user role. All data is scoped to the authenticated user.
+
+🔐 Authentication & Authorization:
+Secure login and registration via email/password
+All habit data and user preferences must be scoped to the logged-in user only
+Habits should not be accessible or editable outside of auth context
+🧱 Core Functional Features:
+1. Add & Manage Habits
+Users can:
+Add a new habit (e.g., “Drink 2L water”)
+Set:
+Name
+Target Days (e.g., Every Day, Weekdays, Custom)
+Start Date
+Edit or delete habits anytime
+Each habit has a unique ID and is displayed in a card/grid view
+2. Daily Check-In System
+For each day:
+Users can mark a habit as Completed or Missed
+This logs the status with a timestamp
+UI must support:
+Viewing all habits for today
+Toggling completion status
+Inline feedback like ✅/❌ or checkbox
+3. Habit Streaks Logic
+For each habit, calculate:
+Current streak (consecutive days)
+Longest streak
+Display streak counter clearly on each habit card
+Missed day resets current streak to 0
+4. Visual Habit History View
+Heatmap or calendar-style view showing:
+Days habits were completed (green)
+Days missed (red or faded)
+Supports navigation by month/week
+5. Analytics Dashboard
+Visualizations for:
+Total habits created
+Completion rate (e.g., 74% of all habit days completed)
+Best-performing habit (based on streaks or completion rate)
+Simple bar/pie/line charts, clean UX
+6. localStorage Use (Mandatory)
+Store the following locally:
+Dark mode preference
+Last selected time range (week/month) on analytics view
+Daily motivational quote toggle (on/off)
+All should persist across refresh & relogin
+7. Daily Motivational Quote Section
+Static set of quotes (or fetch from public API)
+Show one quote per day on the dashboard
+Must rotate or update daily (based on date logic)
+8. UI/UX Considerations
+Prioritize mobile-responsiveness for check-ins
+Friendly empty states when no habits are added
+Habit cards should include visual indicators for streaks and check-in status
+🧪 Additional Notes:
+You may allow re-checking habits from past days (e.g., if someone forgot to log yesterday)
+Habit status can be stored as a date-based object per habit (e.g., habitId: { '2024-04-14': 'completed' })
+Emphasis should be on a satisfying, rewarding, “I want to come back tomorrow” vibe in ux.
