@@ -42,4 +42,18 @@ export function generateRandomPassword(length: number = 12, includeSymbols: bool
     .split('')
     .sort(() => Math.random() - 0.5)
     .join('');
+}
+
+/**
+ * Format a date string as a human-readable date
+ */
+export function formatDate(dateString: string): string {
+  const date = new Date(dateString);
+  
+  // Use Intl API for localized date formatting
+  return new Intl.DateTimeFormat('en-US', {
+    weekday: 'short',
+    month: 'short',
+    day: 'numeric'
+  }).format(date);
 } 

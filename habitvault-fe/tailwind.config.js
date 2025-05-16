@@ -66,10 +66,48 @@ module.exports = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
+        "shimmer": {
+          "0%": { transform: "translateX(-150%) skewX(-15deg)" },
+          "100%": { transform: "translateX(150%) skewX(-15deg)" },
+        },
+        "pulse-slow": {
+          "0%, 100%": { opacity: 0.3 },
+          "50%": { opacity: 0.6 },
+        },
+        "fadeIn": {
+          from: { opacity: 0 },
+          to: { opacity: 1 },
+        },
+        "float": {
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-8px)" },
+        },
+        "pop": {
+          "0%": { transform: "scale(0.9)", opacity: 0.5 },
+          "70%": { transform: "scale(1.1)" },
+          "100%": { transform: "scale(1)", opacity: 1 },
+        },
+        "bounce-in": {
+          "0%": { transform: "scale(0.3)", opacity: 0 },
+          "50%": { transform: "scale(1.05)" },
+          "70%": { transform: "scale(0.9)" },
+          "100%": { transform: "scale(1)", opacity: 1 },
+        },
+        "spin-slow": {
+          from: { transform: "rotate(0deg)" },
+          to: { transform: "rotate(360deg)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "shimmer": "shimmer 2s infinite",
+        "pulse-slow": "pulse-slow 3s infinite",
+        "fadeIn": "fadeIn 0.5s ease-out",
+        "float": "float 3s ease-in-out infinite",
+        "pop": "pop 0.3s ease-out",
+        "bounce-in": "bounce-in 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)",
+        "spin-slow": "spin-slow 8s linear infinite",
       },
     },
   },

@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
+import { saveDarkMode } from "@/lib/local-storage";
 
 type Theme = "dark" | "light" | "system";
 
@@ -25,7 +26,7 @@ const ThemeProviderContext = createContext<ThemeProviderState>(initialState);
 export function ThemeProvider({
   children,
   defaultTheme = "system",
-  storageKey = "ui-theme",
+  storageKey = "habitvault-darkmode",
   ...props
 }: ThemeProviderProps) {
   const [theme, setTheme] = useState<Theme>(
@@ -44,10 +45,12 @@ export function ThemeProvider({
         : "light";
 
       root.classList.add(systemTheme);
+      saveDarkMode(systemTheme === "dark");
       return;
     }
 
     root.classList.add(theme);
+    saveDarkMode(theme === "dark");
   }, [theme]);
 
   const value = {

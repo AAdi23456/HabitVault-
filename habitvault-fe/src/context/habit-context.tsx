@@ -19,6 +19,7 @@ export interface Habit {
   userId: string;
   createdAt: string;
   updatedAt: string;
+  logs?: HabitLog[]; // Add optional logs field
 }
 
 // Define the HabitLog type
@@ -37,6 +38,7 @@ interface HabitContextState {
   habits: Habit[];
   isLoading: boolean;
   error: string | null;
+  stats: any;
 }
 
 // Define the context API
@@ -47,6 +49,7 @@ interface HabitContextType extends HabitContextState {
   deleteHabit: (id: string) => Promise<boolean>;
   getHabit: (id: string) => Promise<Habit | null>;
   logHabit: (habitId: string, date: string, status: 'completed' | 'missed' | 'skipped', notes?: string) => Promise<HabitLog | null>;
+  fetchHabitStats: () => Promise<void>;
 }
 
 // Create the context
@@ -64,6 +67,7 @@ export function HabitProvider({ children }: HabitProviderProps) {
     habits: [],
     isLoading: false,
     error: null,
+    stats: null,
   });
 
   // Helper function to handle API errors
@@ -362,6 +366,50 @@ export function HabitProvider({ children }: HabitProviderProps) {
     }
   }, [isAuthenticated, toast, handleApiError, fetchHabits]);
 
+  // Fetch habit statistics for analytics
+  const fetchHabitStats = useCallback(async () => {
+    if (!isAuthenticated) return;
+    
+    setState(prev => ({ ...prev, isLoading: true, error: null }));
+    
+    try {
+      const response = await fetch(API_ENDPOINTS.HABITS.STATS, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Failed to fetch habit stats: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        setState(prev => ({ 
+          ...prev, 
+          stats: data.stats, 
+          isLoading: false 
+        }));
+      } else {
+        setState(prev => ({ 
+          ...prev, 
+          error: data.message || 'Failed to fetch habit stats', 
+          isLoading: false 
+        }));
+      }
+    } catch (error) {
+      setState(prev => ({ 
+        ...prev, 
+        error: 'An error occurred while fetching habit stats',
+        isLoading: false 
+      }));
+      console.error('Fetch habit stats error:', error);
+    }
+  }, [isAuthenticated]);
+
   // Combine state and functions to provide through context
   const contextValue: HabitContextType = {
     ...state,
@@ -371,6 +419,7 @@ export function HabitProvider({ children }: HabitProviderProps) {
     deleteHabit,
     getHabit,
     logHabit,
+    fetchHabitStats,
   };
 
   return (

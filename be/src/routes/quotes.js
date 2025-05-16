@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
+const { openai, quoteCache } = require('../config/openai');
 
-// Array of motivational quotes
+// Array of motivational quotes (fallback)
 const quotes = [
   {
     text: "The secret of getting ahead is getting started.",
@@ -85,20 +86,77 @@ const quotes = [
   }
 ];
 
-// Get a quote of the day
-router.get('/daily', (req, res) => {
+/**
+ * Generate a new motivational quote using OpenAI
+ * @returns {Promise<Object>} The generated quote object
+ */
+async function generateOpenAIQuote() {
   try {
-    // Get the current date in a consistent format for the seed
-    const today = new Date();
-    const dateString = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o-mini", // Or "gpt-3.5-turbo" depending on your subscription
+      messages: [
+        {
+          role: "system",
+          content: "You are a motivational quote generator."
+        },
+        {
+          role: "user",
+          content: "Give me a short motivational quote about building good habits and staying consistent. It should sound inspiring, ideally under 20 words."
+        }
+      ],
+      max_tokens: 60,
+      temperature: 0.7,
+    });
+
+    // Extract the generated quote text
+    const quoteText = completion.choices[0].message.content.trim();
     
-    // Use the date as a seed to get a consistent quote for the whole day
-    const seed = dateString.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-    const quoteIndex = seed % quotes.length;
+    // Strip quotation marks if present
+    const cleanQuote = quoteText.replace(/^["']|["']$/g, '');
+    
+    return {
+      text: cleanQuote,
+      author: "OpenAI"
+    };
+  } catch (error) {
+    console.error('OpenAI quote generation error:', error);
+    // Return null to indicate failure, will trigger fallback mechanism
+    return null;
+  }
+}
+
+// Get a motivational quote of the day using OpenAI
+router.get('/daily', async (req, res) => {
+  try {
+    // Generate date string for today (YYYY-MM-DD format)
+    const today = new Date();
+    const dateString = today.toISOString().split('T')[0];
+    const cacheKey = `daily_quote_${dateString}`;
+    
+    // Check if quote for today is already in cache
+    let quote = quoteCache.get(cacheKey);
+    
+    if (!quote) {
+      console.log('No cached quote found for today, generating new one with OpenAI');
+      
+      // Generate a new quote from OpenAI
+      quote = await generateOpenAIQuote();
+      
+      // If OpenAI failed, fall back to a random quote from the static list
+      if (!quote) {
+        console.log('Falling back to static quote');
+        const seed = dateString.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+        const quoteIndex = seed % quotes.length;
+        quote = quotes[quoteIndex];
+      }
+      
+      // Cache the quote for today
+      quoteCache.set(cacheKey, quote);
+    }
     
     res.json({
       success: true,
-      quote: quotes[quoteIndex]
+      quote
     });
   } catch (error) {
     console.error('Get daily quote error:', error);

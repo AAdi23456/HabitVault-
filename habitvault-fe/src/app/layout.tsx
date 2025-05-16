@@ -28,7 +28,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.variable} antialiased`}>
-        <ThemeProvider defaultTheme="system" storageKey="theme">
+        <ThemeProvider defaultTheme="system" storageKey="habitvault-darkmode">
           <AuthProvider>
             <HabitProvider>
               {children}
