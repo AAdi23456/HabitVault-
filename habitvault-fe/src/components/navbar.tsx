@@ -5,11 +5,12 @@ import { usePathname } from "next/navigation";
 import { useAuth } from "@/context/auth-context";
 import { buttonVariants } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { LogoutConfirmation } from "@/components/logout-confirmation";
 import { cn } from "@/lib/utils";
 
 export function Navbar() {
   const pathname = usePathname();
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated } = useAuth();
 
   const isActive = (path: string) => {
     return pathname === path;
@@ -37,13 +38,7 @@ export function Navbar() {
               >
                 My Habits
               </Link>
-              <button
-                type="button"
-                onClick={logout}
-                className={cn(buttonVariants({ variant: "ghost", size: "sm" }))}
-              >
-                Logout
-              </button>
+              <LogoutConfirmation />
             </>
           ) : (
             <>

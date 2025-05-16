@@ -21,10 +21,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { motion } from "framer-motion";
-import { Calendar, AlertCircle, CheckCircle, Sun, Moon, Edit3, Save, ArrowLeft, Clock } from "lucide-react";
+import { AlertCircle, CheckCircle, Sun, Moon, Edit3, Save, ArrowLeft, Clock, Calendar as CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
-import { Calendar as CalendarIcon } from "@/components/ui/calendar";
+import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
   PopoverContent,
@@ -276,7 +276,7 @@ export function HabitForm({ habitId, onSuccess }: HabitFormProps) {
                       {startDate ? format(startDate, "PPP") : <span>Pick a date</span>}
                     </Button>
                   </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
+                  <PopoverContent className="w-auto p-0 min-w-[350px] shadow-md" align="start">
                     <Calendar
                       mode="single"
                       selected={startDate}
@@ -286,7 +286,8 @@ export function HabitForm({ habitId, onSuccess }: HabitFormProps) {
                           setValue("startDate", date);
                         }
                       }}
-                      initialFocus
+                      initialFocus={true}
+                      fromMonth={new Date()}
                     />
                   </PopoverContent>
                 </Popover>
@@ -310,19 +311,19 @@ export function HabitForm({ habitId, onSuccess }: HabitFormProps) {
                   <SelectContent>
                     <SelectItem value="daily">
                       <div className="flex items-center gap-2">
-                        <Calendar className="h-4 w-4 text-primary" />
+                        <CalendarIcon className="h-4 w-4 text-primary" />
                         <span>Daily (Every day)</span>
                       </div>
                     </SelectItem>
                     <SelectItem value="weekly">
                       <div className="flex items-center gap-2">
-                        <Calendar className="h-4 w-4 text-amber-500" />
+                        <CalendarIcon className="h-4 w-4 text-amber-500" />
                         <span>Weekdays (Mon-Fri)</span>
                       </div>
                     </SelectItem>
                     <SelectItem value="custom">
                       <div className="flex items-center gap-2">
-                        <Calendar className="h-4 w-4 text-blue-500" />
+                        <CalendarIcon className="h-4 w-4 text-blue-500" />
                         <span>Custom schedule</span>
                       </div>
                     </SelectItem>
@@ -341,12 +342,11 @@ export function HabitForm({ habitId, onSuccess }: HabitFormProps) {
                   <Label className="text-base font-medium">Days of the Week</Label>
                   <div className="flex flex-wrap gap-2 mt-2">
                     {DAYS_OF_WEEK.map((day) => (
-                      <button
+                      <div
                         key={day.id}
-                        type="button"
                         onClick={() => handleTargetDayToggle(day.id)}
                         className={cn(
-                          "flex items-center justify-center py-1.5 px-3 rounded-full text-sm font-medium transition-all",
+                          "flex items-center justify-center py-1.5 px-3 rounded-full text-sm font-medium transition-all cursor-pointer",
                           targetDays.includes(day.id)
                             ? "bg-primary text-white" 
                             : "bg-muted hover:bg-muted/80 text-muted-foreground"
@@ -354,7 +354,7 @@ export function HabitForm({ habitId, onSuccess }: HabitFormProps) {
                       >
                         <span className="md:hidden">{day.short}</span>
                         <span className="hidden md:inline">{day.label}</span>
-                      </button>
+                      </div>
                     ))}
                   </div>
                   {targetDays.length === 0 && (

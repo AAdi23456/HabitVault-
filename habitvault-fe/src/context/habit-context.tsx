@@ -83,8 +83,12 @@ export function HabitProvider({ children }: HabitProviderProps) {
 
   // Fetch all habits for the authenticated user
   const fetchHabits = useCallback(async () => {
-    if (!isAuthenticated) return;
+    if (!isAuthenticated) {
+      console.log('Not authenticated, skipping habit fetch');
+      return;
+    }
     
+    console.log('Fetching habits...');
     setState(prev => ({ ...prev, isLoading: true, error: null }));
     
     try {
@@ -96,11 +100,14 @@ export function HabitProvider({ children }: HabitProviderProps) {
         credentials: 'include',
       });
       
+      console.log('Habits API response status:', response.status);
+      
       if (!response.ok) {
         throw new Error(`Failed to fetch habits: ${response.status}`);
       }
       
       const data = await response.json();
+      console.log('Habits data received:', data.habits?.length || 0, 'habits');
       
       if (data.success) {
         setState(prev => ({ 
@@ -109,6 +116,7 @@ export function HabitProvider({ children }: HabitProviderProps) {
           isLoading: false 
         }));
       } else {
+        console.error('Failed to fetch habits:', data.message);
         setState(prev => ({ 
           ...prev, 
           error: data.message || 'Failed to fetch habits', 
@@ -116,14 +124,30 @@ export function HabitProvider({ children }: HabitProviderProps) {
         }));
       }
     } catch (error) {
+      console.error('Fetch habits error:', error);
       setState(prev => ({ 
         ...prev, 
         error: 'An error occurred while fetching habits',
         isLoading: false 
       }));
-      console.error('Fetch habits error:', error);
     }
   }, [isAuthenticated]);
+
+  // Fetch habits when authentication state changes
+  useEffect(() => {
+    if (isAuthenticated) {
+      console.log('Authentication state changed, fetching habits');
+      fetchHabits();
+    } else {
+      console.log('No longer authenticated, clearing habits');
+      setState({
+        habits: [],
+        isLoading: false,
+        error: null,
+        stats: null,
+      });
+    }
+  }, [isAuthenticated, fetchHabits]);
 
   // Create a new habit
   const createHabit = useCallback(async (habit: Partial<Habit>): Promise<Habit | null> => {

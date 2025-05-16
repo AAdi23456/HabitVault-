@@ -66,24 +66,53 @@ export function AuthProvider({ children }: AuthProviderProps) {
   useEffect(() => {
     const checkAuthStatus = async () => {
       try {
-        // We only need to check localStorage for user data
-        // The cookies are automatically managed by the browser
+        // First check if there's stored user data
         const userStr = localStorage.getItem("user");
+        let user = null;
         
         if (userStr) {
-          const user = JSON.parse(userStr);
-          setAuthState({
-            user,
-            isAuthenticated: true,
-            isLoading: false,
-          });
-        } else {
-          setAuthState({
-            user: null,
-            isAuthenticated: false,
-            isLoading: false,
-          });
+          user = JSON.parse(userStr);
+          
+          // Verify session with the server
+          try {
+            console.log("Verifying session with server...");
+            const response = await fetch(API_ENDPOINTS.AUTH.ME, {
+              method: 'GET',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              credentials: 'include',
+            });
+            
+            if (response.ok) {
+              const data = await response.json();
+              if (data.success && data.user) {
+                // Update user data with latest from server
+                user = data.user;
+                localStorage.setItem("user", JSON.stringify(user));
+                console.log("Session verified successfully");
+              } else {
+                // Server says no valid session
+                console.log("Server reported no valid session");
+                localStorage.removeItem("user");
+                user = null;
+              }
+            } else {
+              console.log("Failed to verify session:", response.status);
+              // Keep using cached user data but log the issue
+            }
+          } catch (error) {
+            console.error("Error verifying session:", error);
+            // Keep using cached user data if server is unavailable
+          }
         }
+        
+        setAuthState({
+          user,
+          isAuthenticated: !!user,
+          isLoading: false,
+        });
+        
       } catch (error) {
         console.error("Authentication check failed:", error);
         localStorage.removeItem("user");

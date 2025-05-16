@@ -2,6 +2,7 @@ const { OpenAI } = require('openai');
 const NodeCache = require('node-cache');
 require('dotenv').config();
 
+
 // Initialize OpenAI client
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,

@@ -116,7 +116,7 @@ async function generateOpenAIQuote() {
     
     return {
       text: cleanQuote,
-      author: "OpenAI"
+      author: "Habitvault"
     };
   } catch (error) {
     console.error('OpenAI quote generation error:', error);
