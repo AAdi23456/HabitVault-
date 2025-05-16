@@ -18,6 +18,7 @@ export default function Home() {
       if (isAuthenticated) {
         router.push("/dashboard");
       } else {
+        // Redirect to landing page when not authenticated
         router.push("/landing");
       }
     }

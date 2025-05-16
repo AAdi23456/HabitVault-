@@ -35,13 +35,8 @@ const authController = {
         name
       });
       
-      // Generate JWT token
-      const token = jwt.sign({ id: user.id }, JWT_SECRET, {
-        expiresIn: JWT_EXPIRES_IN
-      });
-      
-      // Set JWT token in cookie - Use 'jwt' as the cookie name to match frontend middleware
-      res.cookie('jwt', token, cookieOptions);
+      // Don't generate or set JWT token on registration
+      // Let users explicitly log in after registration
       
       // Return success response
       res.status(201).json({

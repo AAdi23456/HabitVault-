@@ -21,9 +21,9 @@ export function middleware(request: NextRequest) {
 
   // If user is not authenticated and trying to access a protected route
   if (!isAuthenticated && !publicRoutes.includes(path) && !path.startsWith('/api')) {
-    // Store the original URL to redirect back after login
-    const loginUrl = new URL('/landing', request.url);
-    return NextResponse.redirect(loginUrl);
+    // Redirect to landing page for unauthenticated users
+    const landingUrl = new URL('/landing', request.url);
+    return NextResponse.redirect(landingUrl);
   }
 
   return NextResponse.next();
